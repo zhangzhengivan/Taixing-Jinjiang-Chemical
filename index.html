@@ -93,6 +93,11 @@
         .lang-content.active {
             display: block;
         }
+
+        /* 锚点偏移（解决固定导航栏遮挡） */
+        :target {
+            scroll-margin-top: 80px;
+        }
     </style>
 </head>
 
@@ -102,7 +107,7 @@
         <div class="container mx-auto px-4 md:px-8">
             <nav class="flex items-center justify-between h-16 md:h-20">
                 <!-- LOGO + 公司名称 -->
-                <a href="#home" class="flex items-center space-x-3">
+                <a href="#home" class="nav-link flex items-center space-x-3" data-target="home">
                     <!-- logo.jpg：公司LOGO -->
                     <img src="images/logo.jpg" 
                          alt="Jinjiang Chemical Logo" 
@@ -121,12 +126,12 @@
 
                 <!-- 桌面端导航 -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#home" class="text-sm hover:text-apple-blue transition-colors font-medium lang-en">Home</a>
-                    <a href="#home" class="text-sm hover:text-apple-blue transition-colors font-medium lang-zh hidden">首页</a>
-                    <a href="#products" class="text-sm hover:text-apple-orange transition-colors font-medium lang-en">Products</a>
-                    <a href="#products" class="text-sm hover:text-apple-orange transition-colors font-medium lang-zh hidden">产品</a>
-                    <a href="#contact" class="text-sm hover:text-apple-green transition-colors font-medium lang-en">Contact</a>
-                    <a href="#contact" class="text-sm hover:text-apple-green transition-colors font-medium lang-zh hidden">联系我们</a>
+                    <a href="#home" class="nav-link text-sm hover:text-apple-blue transition-colors font-medium lang-en" data-target="home">Home</a>
+                    <a href="#home" class="nav-link text-sm hover:text-apple-blue transition-colors font-medium lang-zh hidden" data-target="home">首页</a>
+                    <a href="#products" class="nav-link text-sm hover:text-apple-orange transition-colors font-medium lang-en" data-target="products">Products</a>
+                    <a href="#products" class="nav-link text-sm hover:text-apple-orange transition-colors font-medium lang-zh hidden" data-target="products">产品</a>
+                    <a href="#contact" class="nav-link text-sm hover:text-apple-green transition-colors font-medium lang-en" data-target="contact">Contact</a>
+                    <a href="#contact" class="nav-link text-sm hover:text-apple-green transition-colors font-medium lang-zh hidden" data-target="contact">联系我们</a>
                 </div>
 
                 <!-- 移动端菜单按钮 -->
@@ -139,12 +144,12 @@
         <!-- 移动端菜单 -->
         <div class="md:hidden hidden bg-white border-b border-gray-200 absolute w-full" id="mobileMenu">
             <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
-                <a href="#home" class="py-2 text-sm hover:text-apple-blue transition-colors font-medium lang-en">Home</a>
-                <a href="#home" class="py-2 text-sm hover:text-apple-blue transition-colors font-medium lang-zh hidden">首页</a>
-                <a href="#products" class="py-2 text-sm hover:text-apple-orange transition-colors font-medium lang-en">Products</a>
-                <a href="#products" class="py-2 text-sm hover:text-apple-orange transition-colors font-medium lang-zh hidden">产品</a>
-                <a href="#contact" class="py-2 text-sm hover:text-apple-green transition-colors font-medium lang-en">Contact</a>
-                <a href="#contact" class="py-2 text-sm hover:text-apple-green transition-colors font-medium lang-zh hidden">联系我们</a>
+                <a href="#home" class="nav-link py-2 text-sm hover:text-apple-blue transition-colors font-medium lang-en" data-target="home">Home</a>
+                <a href="#home" class="nav-link py-2 text-sm hover:text-apple-blue transition-colors font-medium lang-zh hidden" data-target="home">首页</a>
+                <a href="#products" class="nav-link py-2 text-sm hover:text-apple-orange transition-colors font-medium lang-en" data-target="products">Products</a>
+                <a href="#products" class="nav-link py-2 text-sm hover:text-apple-orange transition-colors font-medium lang-zh hidden" data-target="products">产品</a>
+                <a href="#contact" class="nav-link py-2 text-sm hover:text-apple-green transition-colors font-medium lang-en" data-target="contact">Contact</a>
+                <a href="#contact" class="nav-link py-2 text-sm hover:text-apple-green transition-colors font-medium lang-zh hidden" data-target="contact">联系我们</a>
             </div>
         </div>
     </header>
@@ -523,193 +528,181 @@
                 © 2025 泰兴金江化学工业有限公司 版权所有
             </p>
             <div class="mt-4 flex justify-center gap-4">
-                <a href="#home" class="text-white/80 hover:text-white transition-colors">
-                    <i class="fa fa-home"></i>
-                </a>
-                <a href="#products" class="text-white/80 hover:text-white transition-colors">
-                    <i class="fa fa-cubes"></i>
-                </a>
-                <a href="#contact" class="text-white/80 hover:text-white transition-colors">
-                    <i class="fa fa-envelope"></i>
-                </a>
             </div>
         </div>
     </footer>
 
-    <!-- 交互逻辑脚本 -->
+    <!-- 核心功能JS：导航切换 + 语言切换 + 轮播 + 移动端菜单 -->
     <script>
-        // 0. 语言切换逻辑
-        const langToggleBtn = document.getElementById('langToggleBtn');
-        const langEnElements = document.querySelectorAll('.lang-en');
-        const langZhElements = document.querySelectorAll('.lang-zh');
-        const langContentEn = document.querySelector('.lang-content.lang-en');
-        const langContentZh = document.querySelector('.lang-content.lang-zh');
-        
-        // 切换语言
-        function toggleLanguage() {
-            // 切换导航、按钮等文本显示
-            langEnElements.forEach(el => el.classList.toggle('hidden'));
-            langZhElements.forEach(el => el.classList.toggle('hidden'));
+        // 1. 导航切换逻辑（解决核心问题）
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有导航链接和板块
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main > section');
             
-            // 切换主要内容区域
-            langContentEn.classList.toggle('active');
-            langContentZh.classList.toggle('active');
-        }
-        
-        // 绑定语言切换按钮事件
-        langToggleBtn.addEventListener('click', toggleLanguage);
-
-        // 1. 移动端菜单控制
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // 2. 页面切换逻辑
-        const homeSection = document.getElementById('home');
-        const productsSection = document.getElementById('products');
-        const contactSection = document.getElementById('contact');
-        const navLinks = document.querySelectorAll('nav a');
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                // 隐藏所有页面
-                homeSection.classList.add('hidden');
-                productsSection.classList.add('hidden');
-                contactSection.classList.add('hidden');
-                
-                // 显示目标页面
-                const targetId = link.getAttribute('href').substring(1);
-                if (targetId === 'home') homeSection.classList.remove('hidden');
-                if (targetId === 'products') productsSection.classList.remove('hidden');
-                if (targetId === 'contact') contactSection.classList.remove('hidden');
-                
-                // 关闭移动端菜单
-                mobileMenu.classList.add('hidden');
-                e.preventDefault();
+            // 导航点击事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // 阻止默认锚点跳转（可选，保留锚点则注释）
+                    
+                    // 获取目标板块ID
+                    const targetId = this.getAttribute('data-target');
+                    
+                    // 隐藏所有板块
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                        section.classList.remove('block');
+                    });
+                    
+                    // 显示目标板块
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.remove('hidden');
+                        targetSection.classList.add('block');
+                        
+                        // 平滑滚动到目标板块（可选优化）
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    
+                    // 移动端菜单自动收起
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
             });
-        });
 
-        // 3. 首页轮播逻辑（banner02.jpg-07）
-        const carouselItems = document.querySelectorAll('.carousel-item');
-        const carouselDots = document.querySelectorAll('.carousel-dot');
-        const homePrevBtn = document.getElementById('homePrevBtn');
-        const homeNextBtn = document.getElementById('homeNextBtn');
-        let currentSlide = 0;
-        let slideInterval;
-
-        // 显示指定轮播图
-        function showSlide(index) {
-            carouselItems.forEach(item => {
-                item.classList.remove('carousel-fade');
-                item.style.opacity = '0';
+            // 2. 语言切换功能
+            const langToggleBtn = document.getElementById('langToggleBtn');
+            const langElementsEn = document.querySelectorAll('.lang-en');
+            const langElementsZh = document.querySelectorAll('.lang-zh');
+            const langContentsEn = document.querySelectorAll('.lang-content.lang-en');
+            const langContentsZh = document.querySelectorAll('.lang-content.lang-zh');
+            
+            let isEnglish = true; // 默认英文
+            langToggleBtn.addEventListener('click', function() {
+                isEnglish = !isEnglish;
+                
+                // 切换显示/隐藏
+                langElementsEn.forEach(el => {
+                    el.classList.toggle('hidden', !isEnglish);
+                });
+                langElementsZh.forEach(el => {
+                    el.classList.toggle('hidden', isEnglish);
+                });
+                
+                // 切换内容激活状态
+                langContentsEn.forEach(el => {
+                    el.classList.toggle('active', isEnglish);
+                });
+                langContentsZh.forEach(el => {
+                    el.classList.toggle('active', !isEnglish);
+                });
             });
-            carouselDots.forEach(dot => dot.classList.remove('bg-apple-blue'));
+
+            // 3. 移动端菜单切换
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
             
-            // 边界处理
-            if (index >= carouselItems.length) currentSlide = 0;
-            if (index < 0) currentSlide = carouselItems.length - 1;
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // 4. 首页轮播逻辑
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.carousel-item');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const totalSlides = slides.length;
             
-            // 显示当前轮播图
-            carouselItems[currentSlide].classList.add('carousel-fade');
-            carouselItems[currentSlide].style.opacity = '1';
-            carouselDots[currentSlide].classList.add('bg-apple-blue');
-        }
-
-        // 下一张/上一张
-        function nextSlide() { currentSlide++; showSlide(currentSlide); }
-        function prevSlide() { currentSlide--; showSlide(currentSlide); }
-
-        // 按钮绑定
-        homePrevBtn.addEventListener('click', () => { prevSlide(); resetSlideInterval(); });
-        homeNextBtn.addEventListener('click', () => { nextSlide(); resetSlideInterval(); });
-
-        // 指示器绑定
-        carouselDots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                currentSlide = index;
+            // 轮播切换函数
+            function showSlide(index) {
+                // 隐藏所有轮播项
+                slides.forEach(slide => {
+                    slide.style.opacity = '0';
+                    slide.classList.remove('carousel-fade');
+                });
+                
+                // 重置所有指示器
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                // 处理边界
+                if (index >= totalSlides) currentSlide = 0;
+                if (index < 0) currentSlide = totalSlides - 1;
+                
+                // 显示当前轮播项
+                slides[currentSlide].style.opacity = '1';
+                slides[currentSlide].classList.add('carousel-fade');
+                dots[currentSlide].classList.add('active');
+            }
+            
+            // 轮播控制按钮
+            document.getElementById('homePrevBtn')?.addEventListener('click', () => {
+                currentSlide--;
                 showSlide(currentSlide);
-                resetSlideInterval();
             });
-        });
-
-        // 自动轮播
-        function startSlideInterval() {
-            slideInterval = setInterval(nextSlide, 5000); // 5秒切换一次
-        }
-        function resetSlideInterval() {
-            clearInterval(slideInterval);
-            startSlideInterval();
-        }
-
-        // 4. 产品页轮播逻辑（product08.jpg-09）
-        const productCarouselItems = document.querySelectorAll('.product-carousel-item');
-        const productCarouselDots = document.querySelectorAll('.product-carousel-dot');
-        const productPrevBtn = document.getElementById('productPrevBtn');
-        const productNextBtn = document.getElementById('productNextBtn');
-        let currentProductSlide = 0;
-        let productSlideInterval;
-
-        function showProductSlide(index) {
-            productCarouselItems.forEach(item => {
-                item.classList.remove('carousel-fade');
-                item.style.opacity = '0';
+            
+            document.getElementById('homeNextBtn')?.addEventListener('click', () => {
+                currentSlide++;
+                showSlide(currentSlide);
             });
-            productCarouselDots.forEach(dot => dot.classList.remove('bg-apple-orange'));
             
-            if (index >= productCarouselItems.length) currentProductSlide = 0;
-            if (index < 0) currentProductSlide = productCarouselItems.length - 1;
+            // 指示器点击
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                });
+            });
             
-            productCarouselItems[currentProductSlide].classList.add('carousel-fade');
-            productCarouselItems[currentProductSlide].style.opacity = '1';
-            productCarouselDots[currentProductSlide].classList.add('bg-apple-orange');
-        }
+            // 自动轮播
+            setInterval(() => {
+                currentSlide++;
+                showSlide(currentSlide);
+            }, 5000);
 
-        function nextProductSlide() { currentProductSlide++; showProductSlide(currentProductSlide); }
-        function prevProductSlide() { currentProductSlide--; showProductSlide(currentProductSlide); }
-
-        productPrevBtn.addEventListener('click', () => { prevProductSlide(); resetProductSlideInterval(); });
-        productNextBtn.addEventListener('click', () => { nextProductSlide(); resetProductSlideInterval(); });
-
-        productCarouselDots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                currentProductSlide = index;
+            // 5. 产品轮播逻辑
+            let currentProductSlide = 0;
+            const productSlides = document.querySelectorAll('.product-carousel-item');
+            const productDots = document.querySelectorAll('.product-carousel-dot');
+            const totalProductSlides = productSlides.length;
+            
+            function showProductSlide(index) {
+                productSlides.forEach(slide => {
+                    slide.style.opacity = '0';
+                    slide.classList.remove('carousel-fade');
+                });
+                
+                productDots.forEach(dot => dot.classList.remove('active'));
+                
+                if (index >= totalProductSlides) currentProductSlide = 0;
+                if (index < 0) currentProductSlide = totalProductSlides - 1;
+                
+                productSlides[currentProductSlide].style.opacity = '1';
+                productSlides[currentProductSlide].classList.add('carousel-fade');
+                productDots[currentProductSlide].classList.add('active');
+            }
+            
+            document.getElementById('productPrevBtn')?.addEventListener('click', () => {
+                currentProductSlide--;
                 showProductSlide(currentProductSlide);
-                resetProductSlideInterval();
             });
-        });
-
-        function startProductSlideInterval() {
-            productSlideInterval = setInterval(nextProductSlide, 5000);
-        }
-        function resetProductSlideInterval() {
-            clearInterval(productSlideInterval);
-            startProductSlideInterval();
-        }
-
-        // 5. 鼠标悬停暂停轮播
-        const carouselContainer = document.querySelector('.carousel-container');
-        carouselContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
-        carouselContainer.addEventListener('mouseleave', () => startSlideInterval());
-
-        const productCarouselContainer = document.querySelector('.product-carousel-container');
-        productCarouselContainer.addEventListener('mouseenter', () => clearInterval(productSlideInterval));
-        productCarouselContainer.addEventListener('mouseleave', () => startProductSlideInterval());
-
-        // 6. 初始化
-        showSlide(currentSlide);
-        startSlideInterval();
-        showProductSlide(currentProductSlide);
-        startProductSlideInterval();
-
-        // 7. 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            
+            document.getElementById('productNextBtn')?.addEventListener('click', () => {
+                currentProductSlide++;
+                showProductSlide(currentProductSlide);
             });
+            
+            productDots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentProductSlide = index;
+                    showProductSlide(currentProductSlide);
+                });
+            });
+            
+            setInterval(() => {
+                currentProductSlide++;
+                showProductSlide(currentProductSlide);
+            }, 5000);
         });
     </script>
 </body>
